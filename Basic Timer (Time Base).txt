@@ -1,0 +1,23 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_TIM2_Init();
+
+    HAL_TIM_Base_Start_IT(&htim2); // Start timer with interrupt
+
+    while(1)
+    {
+        // main loop idle
+    }
+}
+
+// Timer interrupt callback
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if(htim->Instance == TIM2)
+    {
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13); // toggle LED each period
+    }
+}

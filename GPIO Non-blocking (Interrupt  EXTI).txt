@@ -1,0 +1,46 @@
+#include "stm32f103x6.h"
+
+void GPIO_EXTI_Init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN;
+
+    // PC13 -> LED output
+    GPIOC->CRH &= ~(GPIO_CRH_MODE13 | GPIO_CRH_CNF13);
+    GPIOC->CRH |= GPIO_CRH_MODE13_1; // 2MHz push-pull
+
+    // PA0 -> Button input
+    GPIOA->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0);
+    GPIOA->CRL |= GPIO_CRL_CNF0_1; // Input pull-up/down
+    GPIOA->ODR |= GPIO_ODR_ODR0;   // Pull-up
+
+    // Connect EXTI0 to PA0
+    AFIO->EXTICR[0] &= ~AFIO_EXTICR1_EXTI0;
+    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PA;
+
+    // Enable EXTI0, falling edge trigger
+    EXTI->IMR |= EXTI_IMR_MR0;
+    EXTI->FTSR |= EXTI_FTSR_TR0;
+
+    // Enable EXTI0 IRQ in NVIC
+    NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void EXTI0_IRQHandler(void)
+{
+    if(EXTI->PR & EXTI_PR_PR0)
+    {
+        EXTI->PR |= EXTI_PR_PR0;       // Clear pending
+        GPIOC->ODR ^= GPIO_ODR_ODR13;  // Toggle LED
+    }
+}
+
+int main(void)
+{
+    GPIO_EXTI_Init();
+
+    while(1)
+    {
+        // MCU free, can do other tasks
+        __NOP();
+    }
+}

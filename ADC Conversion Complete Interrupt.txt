@@ -1,0 +1,25 @@
+uint32_t adc_value;
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_ADC1_Init();
+
+    HAL_ADC_Start_IT(&hadc1); // start ADC in interrupt mode
+
+    while(1)
+    {
+        // main loop idle
+    }
+}
+
+// ADC conversion complete callback
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    if(hadc->Instance == ADC1)
+    {
+        adc_value = HAL_ADC_GetValue(hadc);
+    }
+}

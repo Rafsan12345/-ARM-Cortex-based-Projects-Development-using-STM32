@@ -1,0 +1,32 @@
+#include "stm32f4xx_hal.h"
+#include <string.h>
+
+UART_HandleTypeDef huart2;
+uint8_t rx_data;
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_USART2_UART_Init();
+
+    HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+
+    while(1)
+    {
+        // Main loop idle
+    }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if(huart->Instance == USART2)
+    {
+        // Convert to uppercase as example processing
+        if(rx_data >= 'a' && rx_data <= 'z') rx_data -= 32;
+        HAL_UART_Transmit(&huart2, &rx_data, 1, HAL_MAX_DELAY);
+
+        HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+    }
+}

@@ -1,0 +1,15 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_SPI1_Init();
+
+    uint8_t tx = 0xAA, rx;
+
+    while(1)
+    {
+        HAL_SPI_TransmitReceive(&hspi1, &tx, &rx, 1, HAL_MAX_DELAY);
+        HAL_Delay(500);
+    }
+}

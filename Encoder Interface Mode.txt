@@ -1,0 +1,15 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_TIM8_Init(); // TIM8 configured as Encoder
+
+    HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
+
+    while(1)
+    {
+        uint32_t position = __HAL_TIM_GET_COUNTER(&htim8);
+        HAL_Delay(100);
+    }
+}

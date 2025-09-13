@@ -1,0 +1,14 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+
+    while(1)
+    {
+        HAL_SuspendTick();
+        HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+        HAL_ResumeTick();
+        HAL_Delay(1000);
+    }
+}

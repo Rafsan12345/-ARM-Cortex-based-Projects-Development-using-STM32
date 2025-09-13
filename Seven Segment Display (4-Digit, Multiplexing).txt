@@ -1,0 +1,19 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+
+    uint8_t digits[4] = {1,2,3,4};
+
+    while(1)
+    {
+        for(int i=0; i<4; i++)
+        {
+            EnableDigit(i);       // enable current digit
+            SetSegments(digits[i]); // set segments A-G
+            HAL_Delay(5);
+            DisableDigit(i);
+        }
+    }
+}

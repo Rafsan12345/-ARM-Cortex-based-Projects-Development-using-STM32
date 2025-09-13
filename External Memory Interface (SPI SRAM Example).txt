@@ -1,0 +1,17 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_SPI1_Init();
+
+    uint8_t write_data = 0xAB;
+    uint8_t read_data = 0;
+
+    while(1)
+    {
+        SPI_SRAM_WriteByte(0x0000, write_data);
+        read_data = SPI_SRAM_ReadByte(0x0000);
+        HAL_Delay(500);
+    }
+}

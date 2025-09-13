@@ -1,0 +1,20 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_SPI1_Init();
+
+    wizchip_init();   // W5500 Init function (library required)
+    wizchip_set_ip("192.168.1.50", "255.255.255.0", "192.168.1.1");
+
+    while(1)
+    {
+        uint8_t buffer[64];
+        int len = wizchip_socket_recv(0, buffer, sizeof(buffer));
+        if(len > 0)
+        {
+            wizchip_socket_send(0, buffer, len); // echo back
+        }
+    }
+}

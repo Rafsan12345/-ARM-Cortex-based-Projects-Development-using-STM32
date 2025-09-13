@@ -1,0 +1,34 @@
+void StartTask1(void *argument)
+{
+    for(;;)
+    {
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        osDelay(500);
+    }
+}
+
+void StartTask2(void *argument)
+{
+    char msg[] = "Task2 running\r\n";
+    for(;;)
+    {
+        HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+        osDelay(1000);
+    }
+}
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_USART1_UART_Init();
+    MX_FREERTOS_Init();  // auto generated if FreeRTOS selected
+
+    osKernelInitialize();
+    osThreadNew(StartTask1, NULL, NULL);
+    osThreadNew(StartTask2, NULL, NULL);
+    osKernelStart();
+
+    while (1) { }
+}

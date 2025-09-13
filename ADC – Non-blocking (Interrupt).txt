@@ -1,0 +1,33 @@
+#include "stm32f103x6.h"
+
+volatile uint16_t adc_value;
+
+void ADC1_Init_IT(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+    ADC1->SQR3 = 0;
+    ADC1->SMPR2 = 7 << 0;
+    ADC1->CR1 |= ADC_CR1_EOCIE; // Enable EOC interrupt
+    ADC1->CR2 |= ADC_CR2_ADON;
+
+    NVIC_EnableIRQ(ADC1_2_IRQn);
+}
+
+void ADC1_2_IRQHandler(void)
+{
+    if(ADC1->SR & ADC_SR_EOC)
+    {
+        adc_value = ADC1->DR; // Store ADC value
+    }
+}
+
+int main(void)
+{
+    ADC1_Init_IT();
+
+    while(1)
+    {
+        ADC1->CR2 |= ADC_CR2_ADON; // Start conversion
+        // Main loop free to do other tasks
+    }
+}

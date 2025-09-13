@@ -1,0 +1,15 @@
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_USB_DEVICE_Init();
+
+    char usb_msg[] = "USB CDC Hello\r\n";
+
+    while (1)
+    {
+        CDC_Transmit_FS((uint8_t*)usb_msg, strlen(usb_msg));
+        HAL_Delay(1000);
+    }
+}

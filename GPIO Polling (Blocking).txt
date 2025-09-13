@@ -1,0 +1,35 @@
+#include "stm32f103x6.h"
+
+void GPIO_Init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPAEN;
+
+    // PC13 -> LED output
+    GPIOC->CRH &= ~(GPIO_CRH_MODE13 | GPIO_CRH_CNF13);
+    GPIOC->CRH |= GPIO_CRH_MODE13_1; // 2MHz push-pull
+
+    // PA0 -> Button input with pull-up
+    GPIOA->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0);
+    GPIOA->CRL |= GPIO_CRL_CNF0_1;
+    GPIOA->ODR |= GPIO_ODR_ODR0; // Pull-up
+}
+
+void Delay_ms(uint32_t count)
+{
+    for(uint32_t i=0;i<count*1000;i++) __NOP();
+}
+
+int main(void)
+{
+    GPIO_Init();
+
+    while(1)
+    {
+        // Blocking polling
+        if(!(GPIOA->IDR & GPIO_IDR_IDR0)) // Button pressed (low)
+        {
+            GPIOC->ODR ^= GPIO_ODR_ODR13; // Toggle LED
+            Delay_ms(500); // Simple debounce
+        }
+    }
+}

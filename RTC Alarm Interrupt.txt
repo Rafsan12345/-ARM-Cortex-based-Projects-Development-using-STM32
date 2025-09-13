@@ -1,0 +1,27 @@
+RTC_AlarmTypeDef sAlarm;
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_RTC_Init();
+
+    sAlarm.AlarmTime.Hours = 0;
+    sAlarm.AlarmTime.Minutes = 0;
+    sAlarm.AlarmTime.Seconds = 5;
+    sAlarm.Alarm = RTC_ALARM_A;
+
+    HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN);
+
+    while(1)
+    {
+        // main loop idle
+    }
+}
+
+// RTC Alarm callback
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+{
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+}
